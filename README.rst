@@ -8,9 +8,14 @@ Package Description
 Provides a simple Python 3 interface to the `Apache PDFBox <https://pdfbox.apache.org/>`_
 command-line tools.
 
+.. image:: https://img.shields.io/pypi/v/python-pdfbox.svg
+    :target: https://pypi.python.org/pypi/python-pdfbox
+    :alt: Latest Version
+          
 Requirements
 ------------
-Aside from Python 3 and those packages specified in `setup.py <https://github.com/lebedov/python-pdfbox/blob/master/setup.py>`_,
+Aside from Python 3 and those packages specified in
+`setup.py <https://github.com/lebedov/python-pdfbox/blob/master/setup.py>`_,
 python-pdfbox requires ``java`` to be present in the system path.
 
 Installation

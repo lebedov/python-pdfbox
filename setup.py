@@ -42,4 +42,5 @@ if __name__ == "__main__":
         long_description = LONG_DESCRIPTION,
         url = URL,
         packages = find_packages(),
+	python_requires='>=3',
         install_requires = ['appdirs', 'sarge'])
