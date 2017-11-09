@@ -5,7 +5,8 @@ python-pdfbox
 
 Package Description
 -------------------
-Provides a simple Python interface to the Apache PDFBox command-line tools.
+Provides a simple Python interface to the [Apache PDFBox](https://pdfbox.apache.org/)
+command-line tools.
 
 Installation
 ------------
