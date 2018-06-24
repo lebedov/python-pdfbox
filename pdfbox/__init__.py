@@ -12,9 +12,9 @@ import urllib.request
 import appdirs
 import sarge
 
-pdfbox_version = '2.0.8'
+pdfbox_version = '2.0.10'
 pdfbox_url = 'https://www.apache.org/dist/pdfbox/{version}/pdfbox-app-{version}.jar'.format(version=pdfbox_version)
-md5_url = 'https://www.apache.org/dist/pdfbox/{version}/pdfbox-app-{version}.jar.md5'.format(version=pdfbox_version)
+sha512_url = 'https://www.apache.org/dist/pdfbox/{version}/pdfbox-app-{version}.jar.sha512'.format(version=pdfbox_version)
 
 class PDFBox(object):
     """
@@ -28,12 +28,12 @@ class PDFBox(object):
         Extract all text from PDF file.
     """
 
-    def _verify_md5(self, data, digest):
+    def _verify_sha512(self, data, digest):
         """
-        Verify MD5 checksum.
+        Verify SHA512 checksum.
         """
-        
-        return hashlib.md5(data).hexdigest() == digest
+
+        return hashlib.sha512(data).hexdigest() == digest
 
     def _get_pdfbox_path(self):
         """
@@ -41,7 +41,7 @@ class PDFBox(object):
         """
 
         # Use PDFBOX environmental variable if it exists:
-        if 'PDFBOX' in os.environ:        
+        if 'PDFBOX' in os.environ:
             pdfbox_path = os.environ['PDFBOX']
             if not os.path.exists(pdfbox_path):
                 raise RuntimeError('pdfbox not found')
@@ -49,11 +49,11 @@ class PDFBox(object):
 
         # Use platform-specific cache directory:
         a = appdirs.AppDirs('python-pdfbox')
-        cache_dir = a.user_cache_dir    
+        cache_dir = a.user_cache_dir
         pdfbox_path = os.path.join(cache_dir, os.path.basename(pdfbox_url))
 
         # Retrieve, cache, and verify PDFBox jar file:
-        if not os.path.exists(pdfbox_path):    
+        if not os.path.exists(pdfbox_path):
             r = urllib.request.urlopen(pdfbox_url)
             try:
                 data = r.read()
@@ -65,18 +65,18 @@ class PDFBox(object):
                 with open(pdfbox_path, 'wb') as f:
                     f.write(data)
 
-            r = urllib.request.urlopen(md5_url)
+            r = urllib.request.urlopen(sha512_url)
             encoding = r.headers.get_content_charset('utf-8')
             try:
-                md5 = r.read().decode(encoding).strip()
+                sha512 = r.read().decode(encoding).strip()
             except:
-                raise RuntimeError('error retrieving md5sum')
+                raise RuntimeError('error retrieving sha512sum')
             else:
-                if not self._verify_md5(data, md5):
-                    raise RuntimeError('failed to verify md5sum')
+                if not self._verify_sha512(data, sha512):
+                    raise RuntimeError('failed to verify sha512sum')
 
         return pdfbox_path
-    
+
     def __init__(self):
         self.pdfbox_path = self._get_pdfbox_path()
         self.java_path = shutil.which('java')
