@@ -43,7 +43,7 @@ class PDFBox(object):
     -------
     extract_text(input_path, output_path='',
                  password=None, encoding=None, html=False, sort=False,
-                 ignore_beads=False, force=False, start_page=1, end_page=None)
+                 ignore_beads=False, start_page=1, end_page=None)
         Extract all text from PDF file.
     """
 
@@ -127,7 +127,7 @@ class PDFBox(object):
 
     def extract_text(self, input_path, output_path='',
                      password=None, encoding=None, html=False, sort=False,
-                     ignore_beads=False, force=False, start_page=1, end_page=None):
+                     ignore_beads=False, start_page=1, end_page=None):
         """
         Extract all text from PDF file.
 
@@ -147,8 +147,6 @@ class PDFBox(object):
             If True, sort text before returning it.
         ignore_beads : bool
             If True, ignore separation by beads.
-        force : bool
-            If True, ignore corrupt objects.
         start_page : int
             First page to extract (starting with 1).
         end_page : int
@@ -159,13 +157,12 @@ class PDFBox(object):
         text : str
             Extracted text. If `output_path` is not specified, nothing is returned.
         """
-        
+
         options = (' -password {password}'.format(password=password) if password else '') +\
                   (' -encoding {encoding}'.format(encoding=encoding) if encoding else '') +\
                   (' -html' if html else '') +\
                   (' -sort' if sort else '') +\
                   (' -ignoreBeads' if ignore_beads else '') +\
-                  (' -force' if force else '') +\
                   (' -startPage {start_page}'.format(start_page=start_page) if start_page else '') +\
                   (' -endPage {end_page}'.format(end_page=end_page) if end_page else '')
         if not output_path:
