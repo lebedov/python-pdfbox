@@ -102,7 +102,7 @@ class PDFBox(object):
             except:
                 raise RuntimeError('error retrieving %s' % pdfbox_url)
             else:
-                cache_dir.mkdir(exist_ok=True)
+                cache_dir.mkdir(exist_ok=True, parents=True)
                 pdfbox_path = cache_dir.joinpath(pathlib.Path(pdfbox_url).name)
                 with open(pdfbox_path, 'wb') as f:
                     f.write(data)
