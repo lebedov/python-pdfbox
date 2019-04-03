@@ -102,9 +102,10 @@ class PDFBox(object):
             except:
                 raise RuntimeError('error retrieving %s' % pdfbox_url)
             else:
-                cache_dir.mkdir(exist_ok=True, parents=True)
+                if not os.path.exists(cache_dir.as_posix()):
+                    cache_dir.mkdir(parents=True)
                 pdfbox_path = cache_dir.joinpath(pathlib.Path(pdfbox_url).name)
-                with open(pdfbox_path, 'wb') as f:
+                with open(pdfbox_path.as_posix(), 'wb') as f:
                     f.write(data)
 
             r = urllib.request.urlopen(sha512_url)
