@@ -9,7 +9,7 @@ import pdfbox
 class test_pdfbox(TestCase):
     def test_extract(self):
         p = pdfbox.PDFBox()
-        text = p.extract_text('test.pdf')
+        text = p.extract_text('tests/test.pdf')
         self.assertEqual(text, 'this is a test PDF\n')
 
 if __name__ == '__main__':
