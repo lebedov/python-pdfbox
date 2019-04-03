@@ -1,4 +1,6 @@
 recursive-include pdfbox *.py
+recursive-include tests *
 include *.rst
 include *.py
+global-exclude *.pyc
 exclude MANIFEST.in
