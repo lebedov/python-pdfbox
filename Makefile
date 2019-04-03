@@ -21,7 +21,7 @@ install:
 	$(PYTHON) setup.py install
 
 test:
-	$(PYTHON) msgpack_numpy.py
+	$(PYTHON) -m unittest tests/test_pdfbox.py
 
 clean:
 	$(PYTHON) setup.py clean
