@@ -17,7 +17,7 @@ import pkg_resources
 import sarge
 
 pdfbox_archive_url = 'https://archive.apache.org/dist/pdfbox/'
-
+import os
 class _PDFBoxVersionsParser(html.parser.HTMLParser):
     """
     Class for parsing versions available on PDFBox archive site.
@@ -92,7 +92,7 @@ class PDFBox(object):
                 return pkg_resources.parse_version(v)
             return sorted(file_list, key=f)[-1]
         else:
-            # If no jar files are cached, find the latest version jar, retrieve it, 
+            # If no jar files are cached, find the latest version jar, retrieve it,
             # cache it, and verify its checksum:
             pdfbox_url = self._get_latest_pdfbox_url()
             sha512_url = pdfbox_url + '.sha512'
@@ -175,4 +175,74 @@ class PDFBox(object):
                                                                                                        output_path=output_path)
         p = sarge.capture_stdout(cmd)
         if not output_path:
+            return p.stdout.text
+
+    def pdf_to_images(self, input_path, output_path, password=None,
+                      imageType=None, outputPrefix=None,
+                      startPage=None, endPage=None,
+                      page=None, dpi=None, color=None, cropbox=None,time=None):
+        """
+        Extract all text from PDF file.
+
+        Parameters
+        ----------
+        input_path : str
+            Input PDF file.
+        output_path : str
+            Output text file. If not specified, the extracted text is returned.
+        password : str
+            PDF password.
+        imageType : str
+            The image type to write to. Currently only jpg or png.
+            Default: jpg.
+        outputPrefix : str
+            The prefix to the image file.
+            DEfault: Name of PDF document.
+        startPage : bool
+            The first page to convert, one based.
+            Default: 1.
+        endPage : bool
+            The last page to convert, one based.
+            Default: Last Page.
+        page : int
+            The only page to extract (1-based).
+        dpi : int
+            DPI resolution of exported images.
+            Default: Detected from screen (or 96 if headless).
+        color : int
+            The color depth (valid: bilevel, gray, rgb, rgba).
+            Default: rgb.
+        cropbox : str
+            The page area to export.
+            Format: e.g "34 45 56 67"
+        time : int
+            Prints timing information to stdout.
+
+        Returns
+        -------
+        text : str
+            Time taken to complete the process.
+        """
+
+        options = (' -password {password}'.format(password=password) if password else '') + \
+                  (' -imageType {imageType}'.format(imageType=imageType) if imageType else '') + \
+                  (' -outputPrefix {outputPrefix}'.format(outputPrefix=outputPrefix) if outputPrefix else '') + \
+                  (' -startPage {startPage}'.format(startPage=startPage) if startPage else '') + \
+                  (' -endPage {endPage}'.format(endPage=endPage) if endPage else '') + \
+                  (' -page {page}'.format(page=page) if page else '') + \
+                  (' -dpi {dpi}'.format(dpi=dpi) if dpi else '') + \
+                  (' -color {color}'.format(color=color) if color else '') + \
+                  (' -cropbox {cropbox}'.format(cropbox=cropbox) if cropbox else '') + \
+                  (' -time {time}'.format(time=time) if time else '')
+
+        dst = os.path.join(output_path,os.path.basename(input_path))
+        dst = os.path.abspath(dst)
+        shutil.copy(input_path,dst)
+        cmd = '{java_path} -jar {pdfbox_path} PDFToImage {options} {input_path}'.format(java_path=self.java_path,
+                                                                                                       pdfbox_path=self.pdfbox_path,
+                                                                                                       options=options,
+                                                                                                       input_path=dst)
+        p = sarge.capture_stdout(cmd)
+        os.remove(dst)
+        if time:
             return p.stdout.text
