@@ -177,12 +177,12 @@ class PDFBox(object):
         if not output_path:
             return p.stdout.text
 
-    def pdf_to_images(self, input_path, output_path, password=None,
+    def pdf_to_images(self, input_path, password=None,
                       imageType=None, outputPrefix=None,
                       startPage=None, endPage=None,
-                      page=None, dpi=None, color=None, cropbox=None,time=None):
+                      page=None, dpi=None, color=None, cropbox=None,time=True):
         """
-        Extract all text from PDF file.
+        Extract all pages as images from PDF file.
 
         Parameters
         ----------
@@ -197,7 +197,12 @@ class PDFBox(object):
             Default: jpg.
         outputPrefix : str
             The prefix to the image file.
-            DEfault: Name of PDF document.
+            Default: Name of PDF document.
+            e.g
+                >> outputPrefix = '/output/': Images would be saved in dir: output with
+                nameprefix as 1.jpg, 2.jpg, etc.
+                >> outputPrefix = '/output' : Images would be saved with
+                nameprefix as output1.jpg in the same location where the input file is.   
         startPage : bool
             The first page to convert, one based.
             Default: 1.
@@ -233,16 +238,12 @@ class PDFBox(object):
                   (' -dpi {dpi}'.format(dpi=dpi) if dpi else '') + \
                   (' -color {color}'.format(color=color) if color else '') + \
                   (' -cropbox {cropbox}'.format(cropbox=cropbox) if cropbox else '') + \
-                  (' -time {time}'.format(time=time) if time else '')
+                  (' {time}'.format(time="-time") if time else '')
 
-        dst = os.path.join(output_path,os.path.basename(input_path))
-        dst = os.path.abspath(dst)
-        shutil.copy(input_path,dst)
         cmd = '{java_path} -jar {pdfbox_path} PDFToImage {options} {input_path}'.format(java_path=self.java_path,
                                                                                                        pdfbox_path=self.pdfbox_path,
                                                                                                        options=options,
-                                                                                                       input_path=dst)
-        p = sarge.capture_stdout(cmd)
-        os.remove(dst)
-        if time:
-            return p.stdout.text
+                                                                                                       input_path=input_path)
+        p = sarge.capture_both(cmd)
+        # Sarge gets all the output as stderr even if its a successsfull execution.
+        return p.stderr.text
