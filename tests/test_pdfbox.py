@@ -15,8 +15,8 @@ class test_pdfbox(TestCase):
     def test_image_extract(self):
         p = pdfbox.PDFBox()
         output_prefix = r'tests/output/test'
-        result = p.pdf_to_images('tests/test.pdf', outputPrefix=output_prefix)
-        self.assertTrue('test1.jpg' in os.listdir('tests/output'))
+        result = p.pdf_to_images('tests/test2.pdf', outputPrefix=output_prefix)
+        self.assertTrue('test1.jpg' in os.listdir('tests/output') and 'test2.jpg' in os.listdir('tests/output'))
 
 if __name__ == '__main__':
     main()
