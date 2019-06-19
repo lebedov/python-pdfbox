@@ -45,6 +45,11 @@ class PDFBox(object):
                  password=None, encoding=None, html=False, sort=False,
                  ignore_beads=False, start_page=1, end_page=None)
         Extract all text from PDF file.
+    pdf_to_images(input_path, password=None,
+                  imageType=None, outputPrefix=None,
+                  startPage=None, endPage=None,
+                  page=None, dpi=None, color=None, cropbox=None,time=True)
+        Extract all pages of PDF file as images.
     """
 
     def _verify_sha512(self, data, digest):
@@ -182,7 +187,7 @@ class PDFBox(object):
                       startPage=None, endPage=None,
                       page=None, dpi=None, color=None, cropbox=None,time=True):
         """
-        Extract all pages as images from PDF file.
+        Extract all pages of PDF file as images.
 
         Parameters
         ----------
@@ -193,33 +198,30 @@ class PDFBox(object):
         password : str
             PDF password.
         imageType : str
-            The image type to write to. Currently only jpg or png.
-            Default: jpg.
+            The image type to write to. Currently only jpg or png (default:
+            jpg).
         outputPrefix : str
-            The prefix to the image file.
-            Default: Name of PDF document.
+            The prefix to the image file (default: name of PDF document).
             e.g
-                >> outputPrefix = '/output/': Images would be saved in dir: output with
-                nameprefix as 1.jpg, 2.jpg, etc.
-                >> outputPrefix = '/output' : Images would be saved with
-                nameprefix as output1.jpg in the same location where the input file is.   
+                >> outputPrefix = '/output/': Images saved in `output` directory
+                as 1.jpg, 2.jpg, etc.
+                >> outputPrefix = '/output' : Images saved in `output` directory
+                as output1.jpg, output2.jpg, etc.
+                in the same location where the input file is.
         startPage : bool
-            The first page to convert, one based.
-            Default: 1.
+            The first page to convert, one-based (default: 1).
         endPage : bool
-            The last page to convert, one based.
-            Default: Last Page.
+            The last page to convert, one-based (default: last).
         page : int
-            The only page to extract (1-based).
+            The only page to extract, one-based.
         dpi : int
-            DPI resolution of exported images.
-            Default: Detected from screen (or 96 if headless).
-        color : int
-            The color depth (valid: bilevel, gray, rgb, rgba).
-            Default: rgb.
+            DPI resolution of exported images (default:
+            detected from screen, or 96 if headless).
+        color : str
+            The color depth; may be set to `bilevel`, `gray`, `rgb`, `rgba`
+            (default: `rgb`)
         cropbox : str
-            The page area to export.
-            Format: e.g "34 45 56 67"
+            The page area to export, e.g "34 45 56 67"
         time : int
             Prints timing information to stdout.
 
@@ -245,5 +247,4 @@ class PDFBox(object):
                                                                                                        options=options,
                                                                                                        input_path=input_path)
         p = sarge.capture_both(cmd)
-        # Sarge gets all the output as stderr even if its a successsfull execution.
         return p.stderr.text
