@@ -31,7 +31,7 @@ and caches it if not present.
 
 Usage
 -----
-The interface currently exposes only two features in PDFBox: text extraction, and conversion to images: ::
+The interface currently exposes only two features in PDFBox: text extraction and conversion to images: ::
 
     import pdfbox
     p = pdfbox.PDFBox()
