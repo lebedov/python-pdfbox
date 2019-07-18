@@ -6,7 +6,6 @@ Python interface to Apache PDFBox.
 
 import hashlib
 import html.parser
-import os
 import pathlib
 import re
 import shutil
@@ -50,6 +49,9 @@ class PDFBox(object):
                   startPage=None, endPage=None,
                   page=None, dpi=None, color=None, cropbox=None,time=True)
         Extract all pages of PDF file as images.
+    extract_images(self, input_path, password=None, prefix=None,
+                   directJPEG=False)
+        Extract all images from a PDF file.
     """
 
     def _verify_sha512(self, data, digest):
@@ -193,8 +195,6 @@ class PDFBox(object):
         ----------
         input_path : str
             Input PDF file.
-        output_path : str
-            Output text file. If not specified, the extracted text is returned.
         password : str
             PDF password.
         imageType : str
@@ -246,5 +246,37 @@ class PDFBox(object):
                                                                                                        pdfbox_path=self.pdfbox_path,
                                                                                                        options=options,
                                                                                                        input_path=input_path)
+        p = sarge.capture_both(cmd)
+        return p.stderr.text
+
+    def extract_images(self, input_path, password=None, prefix=None, directJPEG=False):
+        """
+               Extract all images from a PDF file.
+
+               Parameters
+               ----------
+               input_path : str
+                   Input PDF file.
+               password : str
+                   PDF password.
+               prefix : str
+                   The prefix to the image file (default: name of PDF document).
+               directJPEG: bool
+                   Forces the direct extraction of JPEG images regardless of colorspace (default: False).
+
+               Returns
+               -------
+               text : str
+                   Time taken to complete the process.
+               """
+
+        options = (' -password {password}'.format(password=password) if password else '') + \
+                  (' -prefix {prefix}'.format(prefix=prefix) if prefix else '') + \
+                  (' -directJPEG {directJPEG}'.format(directJPEG="-directJPEG") if directJPEG else '')
+
+        cmd = '{java_path} -jar {pdfbox_path} ExtractImages {options} {input_path}'.format(java_path=self.java_path,
+                                                                                        pdfbox_path=self.pdfbox_path,
+                                                                                        options=options,
+                                                                                        input_path=input_path)
         p = sarge.capture_both(cmd)
         return p.stderr.text
