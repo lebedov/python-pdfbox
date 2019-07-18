@@ -31,12 +31,14 @@ and caches it if not present.
 
 Usage
 -----
-The interface currently exposes only two features in PDFBox: text extraction and conversion to images: ::
+The interface currently exposes only several features in PDFBox (text extraction, conversion to images, extraction
+of images): ::
 
     import pdfbox
     p = pdfbox.PDFBox()
     text = p.extract_text('/path/to/my_file.pdf')
     p.pdf_to_images('/path/to/my_file.pdf')
+    p.extract_images('/path/to/my_file.pdf')
 
 Development
 -----------
