@@ -251,24 +251,24 @@ class PDFBox(object):
 
     def extract_images(self, input_path, password=None, prefix=None, directJPEG=False):
         """
-               Extract all images from a PDF file.
+        Extract all images from a PDF file.
 
-               Parameters
-               ----------
-               input_path : str
-                   Input PDF file.
-               password : str
-                   PDF password.
-               prefix : str
-                   The prefix to the image file (default: name of PDF document).
-               directJPEG: bool
-                   Forces the direct extraction of JPEG images regardless of colorspace (default: False).
+        Parameters
+        ----------
+        input_path : str
+            Input PDF file.
+        password : str
+            PDF password.
+        prefix : str
+            The prefix to the image file (default: name of PDF document).
+        directJPEG: bool
+            Forces the direct extraction of JPEG images regardless of colorspace (default: False).
 
-               Returns
-               -------
-               text : str
-                   Time taken to complete the process.
-               """
+        Returns
+        -------
+        text : str
+            Time taken to complete the process.
+        """
 
         options = (' -password {password}'.format(password=password) if password else '') + \
                   (' -prefix {prefix}'.format(prefix=prefix) if prefix else '') + \
