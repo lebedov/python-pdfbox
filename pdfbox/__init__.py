@@ -175,7 +175,7 @@ class PDFBox(object):
                   (' -endPage {end_page}'.format(end_page=end_page) if end_page else '')
         if not output_path:
             options += ' -console'
-        cmd = '{java_path} -jar {pdfbox_path} ExtractText {options} {input_path} {output_path}'.format(java_path=self.java_path,
+        cmd = '"{java_path}" -jar "{pdfbox_path}" ExtractText {options} "{input_path}" "{output_path}"'.format(java_path=self.java_path,
                                                                                                        pdfbox_path=self.pdfbox_path,
                                                                                                        options=options,
                                                                                                        input_path=input_path,
@@ -242,7 +242,7 @@ class PDFBox(object):
                   (' -cropbox {cropbox}'.format(cropbox=cropbox) if cropbox else '') + \
                   (' {time}'.format(time="-time") if time else '')
 
-        cmd = '{java_path} -jar {pdfbox_path} PDFToImage {options} {input_path}'.format(java_path=self.java_path,
+        cmd = '"{java_path}" -jar "{pdfbox_path}" PDFToImage {options} "{input_path}"'.format(java_path=self.java_path,
                                                                                                        pdfbox_path=self.pdfbox_path,
                                                                                                        options=options,
                                                                                                        input_path=input_path)
@@ -274,7 +274,7 @@ class PDFBox(object):
                   (' -prefix {prefix}'.format(prefix=prefix) if prefix else '') + \
                   (' -directJPEG {directJPEG}'.format(directJPEG="-directJPEG") if directJPEG else '')
 
-        cmd = '{java_path} -jar {pdfbox_path} ExtractImages {options} {input_path}'.format(java_path=self.java_path,
+        cmd = '"{java_path}" -jar "{pdfbox_path}" ExtractImages {options} "{input_path}"'.format(java_path=self.java_path,
                                                                                         pdfbox_path=self.pdfbox_path,
                                                                                         options=options,
                                                                                         input_path=input_path)
