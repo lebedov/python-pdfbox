@@ -7,7 +7,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 NAME =               'python-pdfbox'
-VERSION =            '0.1.6'
+VERSION =            '0.1.7'
 AUTHOR =             'Lev E. Givon'
 AUTHOR_EMAIL =       'lev@columbia.edu'
 URL =                'https://github.com/lebedov/python-pdfbox/'
@@ -43,4 +43,4 @@ if __name__ == "__main__":
         url = URL,
         packages = find_packages(),
 	python_requires='>=3',
-        install_requires = ['appdirs', 'sarge', 'setuptools'])
+        install_requires = ['appdirs', 'jpype1', 'setuptools'])

@@ -6,17 +6,19 @@ Python interface to Apache PDFBox.
 
 import hashlib
 import html.parser
+import os
 import pathlib
 import re
 import shutil
 import urllib.request
 
 import appdirs
+import jpype
+import jpype.imports
 import pkg_resources
-import sarge
 
 pdfbox_archive_url = 'https://archive.apache.org/dist/pdfbox/'
-import os
+
 class _PDFBoxVersionsParser(html.parser.HTMLParser):
     """
     Class for parsing versions available on PDFBox archive site.
@@ -47,9 +49,9 @@ class PDFBox(object):
     pdf_to_images(input_path, password=None,
                   imageType=None, outputPrefix=None,
                   startPage=None, endPage=None,
-                  page=None, dpi=None, color=None, cropbox=None,time=True)
+                  page=None, dpi=None, color=None, cropbox=None, time=True)
         Extract all pages of PDF file as images.
-    extract_images(self, input_path, password=None, prefix=None,
+    extract_images(input_path, password=None, prefix=None,
                    directJPEG=False)
         Extract all images from a PDF file.
     """
@@ -129,13 +131,14 @@ class PDFBox(object):
 
     def __init__(self):
         self.pdfbox_path = self._get_pdfbox_path()
-        self.java_path = shutil.which('java')
-        if not self.java_path:
-            raise RuntimeError('java not found')
+        jpype.addClassPath(self.pdfbox_path)
+        jpype.startJVM(convertStrings=False)
+        import org.apache.pdfbox.tools as tools
+        self.pdfbox_tools = tools
 
     def extract_text(self, input_path, output_path='',
                      password=None, encoding=None, html=False, sort=False,
-                     ignore_beads=False, start_page=1, end_page=None):
+                     ignore_beads=False, start_page=1, end_page=None, console=False):
         """
         Extract all text from PDF file.
 
@@ -144,7 +147,8 @@ class PDFBox(object):
         input_path : str
             Input PDF file.
         output_path : str
-            Output text file. If not specified, the extracted text is returned.
+            Output text file. If not specified, the extracted text is written to
+            a text file with the same basename as the input file.
         password : str
             PDF password.
         encoding : str
@@ -159,11 +163,8 @@ class PDFBox(object):
             First page to extract (starting with 1).
         end_page : int
             Last page to extract (starting with 1).
-
-        Returns
-        -------
-        text : str
-            Extracted text. If `output_path` is not specified, nothing is returned.
+        console : bool
+            If True, write output to console.
         """
 
         options = (' -password {password}'.format(password=password) if password else '') +\
@@ -172,17 +173,12 @@ class PDFBox(object):
                   (' -sort' if sort else '') +\
                   (' -ignoreBeads' if ignore_beads else '') +\
                   (' -startPage {start_page}'.format(start_page=start_page) if start_page else '') +\
-                  (' -endPage {end_page}'.format(end_page=end_page) if end_page else '')
-        if not output_path:
-            options += ' -console'
-        cmd = '"{java_path}" -jar "{pdfbox_path}" ExtractText {options} "{input_path}" "{output_path}"'.format(java_path=self.java_path,
-                                                                                                       pdfbox_path=self.pdfbox_path,
-                                                                                                       options=options,
-                                                                                                       input_path=input_path,
-                                                                                                       output_path=output_path)
-        p = sarge.capture_stdout(cmd)
-        if not output_path:
-            return p.stdout.text
+                  (' -endPage {end_page}'.format(end_page=end_page) if end_page else '') +\
+                  '{console}'.format(console='-console') if console else ''
+        cmd = '{options} {input_path} {output_path}'.format(options=options,
+                                                            input_path=str(pathlib.Path(input_path).expanduser()),
+                                                            output_path=output_path).strip()
+        self.pdfbox_tools.ExtractText.main(cmd.split(' '))
 
     def pdf_to_images(self, input_path, password=None,
                       imageType=None, outputPrefix=None,
@@ -224,11 +220,6 @@ class PDFBox(object):
             The page area to export, e.g "34 45 56 67"
         time : int
             Prints timing information to stdout.
-
-        Returns
-        -------
-        text : str
-            Time taken to complete the process.
         """
 
         options = (' -password {password}'.format(password=password) if password else '') + \
@@ -242,12 +233,9 @@ class PDFBox(object):
                   (' -cropbox {cropbox}'.format(cropbox=cropbox) if cropbox else '') + \
                   (' {time}'.format(time="-time") if time else '')
 
-        cmd = '"{java_path}" -jar "{pdfbox_path}" PDFToImage {options} "{input_path}"'.format(java_path=self.java_path,
-                                                                                                       pdfbox_path=self.pdfbox_path,
-                                                                                                       options=options,
-                                                                                                       input_path=input_path)
-        p = sarge.capture_both(cmd)
-        return p.stderr.text
+        cmd = '{options} {input_path}'.format(options=options,
+                                              input_path=input_path).strip()
+        self.pdfbox_tools.PDFToImage.main(cmd.split(' '))
 
     def extract_images(self, input_path, password=None, prefix=None, directJPEG=False):
         """
@@ -263,20 +251,12 @@ class PDFBox(object):
             The prefix to the image file (default: name of PDF document).
         directJPEG: bool
             Forces the direct extraction of JPEG images regardless of colorspace (default: False).
-
-        Returns
-        -------
-        text : str
-            Time taken to complete the process.
         """
 
         options = (' -password {password}'.format(password=password) if password else '') + \
                   (' -prefix {prefix}'.format(prefix=prefix) if prefix else '') + \
                   (' -directJPEG {directJPEG}'.format(directJPEG="-directJPEG") if directJPEG else '')
 
-        cmd = '"{java_path}" -jar "{pdfbox_path}" ExtractImages {options} "{input_path}"'.format(java_path=self.java_path,
-                                                                                        pdfbox_path=self.pdfbox_path,
-                                                                                        options=options,
-                                                                                        input_path=input_path)
-        p = sarge.capture_both(cmd)
-        return p.stderr.text
+        cmd = '{options} {input_path}'.format(options=options,
+                                              input_path=input_path).strip()
+        self.pdfbox_tools.ExtractImages.main(cmd.split(' '))
