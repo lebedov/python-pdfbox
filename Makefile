@@ -21,7 +21,7 @@ install:
 	$(PYTHON) setup.py install
 
 test:
-	$(PYTHON) -m unittest tests/test_pdfbox.py
+	cd tests && $(PYTHON) -m unittest test_pdfbox.py
 
 clean:
 	$(PYTHON) setup.py clean

@@ -6,6 +6,7 @@ Python interface to Apache PDFBox.
 
 import hashlib
 import html.parser
+import os
 import pathlib
 import re
 import shutil
@@ -17,7 +18,7 @@ import jpype.imports
 import pkg_resources
 
 pdfbox_archive_url = 'https://archive.apache.org/dist/pdfbox/'
-import os
+
 class _PDFBoxVersionsParser(html.parser.HTMLParser):
     """
     Class for parsing versions available on PDFBox archive site.
@@ -232,7 +233,7 @@ class PDFBox(object):
                   (' -cropbox {cropbox}'.format(cropbox=cropbox) if cropbox else '') + \
                   (' {time}'.format(time="-time") if time else '')
 
-        cmd = '{options} {input_path}'.format(options=options,                                              
+        cmd = '{options} {input_path}'.format(options=options,
                                               input_path=input_path).strip()
         self.pdfbox_tools.PDFToImage.main(cmd.split(' '))
 
