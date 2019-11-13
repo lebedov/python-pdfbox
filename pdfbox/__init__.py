@@ -167,18 +167,29 @@ class PDFBox(object):
             If True, write output to console.
         """
 
-        options = (' -password {password}'.format(password=password) if password else '') +\
-                  (' -encoding {encoding}'.format(encoding=encoding) if encoding else '') +\
-                  (' -html' if html else '') +\
-                  (' -sort' if sort else '') +\
-                  (' -ignoreBeads' if ignore_beads else '') +\
-                  (' -startPage {start_page}'.format(start_page=start_page) if start_page else '') +\
-                  (' -endPage {end_page}'.format(end_page=end_page) if end_page else '') +\
-                  '{console}'.format(console='-console') if console else ''
-        cmd = '{options} {input_path} {output_path}'.format(options=options,
-                                                            input_path=str(pathlib.Path(input_path).expanduser()),
-                                                            output_path=output_path).strip()
-        self.pdfbox_tools.ExtractText.main(cmd.split(' '))
+        options = []
+        if password:
+            options.extend(['-password', password])
+        if encoding:
+            options.extend(['-encoding', encoding])
+        if html:
+            options.append('-html')
+        if sort:
+            options.append('-sort')
+        if ignore_beads:
+            options.append('-ignoreBeads')
+        if start_page:
+            options.extend(['-startPage', str(start_page)])
+        if end_page:
+            options.extend(['-endPage', str(end_page)])
+        if console:
+            options.append('-console')
+
+        args = options
+        args.append(str(pathlib.Path(input_path).expanduser()))
+        if output_path:
+            args.append(str(pathlib.Path(output_path).expanduser()))
+        self.pdfbox_tools.ExtractText.main(args)
 
     def pdf_to_images(self, input_path, password=None,
                       imageType=None, outputPrefix=None,
@@ -222,20 +233,31 @@ class PDFBox(object):
             Prints timing information to stdout.
         """
 
-        options = (' -password {password}'.format(password=password) if password else '') + \
-                  (' -imageType {imageType}'.format(imageType=imageType) if imageType else '') + \
-                  (' -outputPrefix {outputPrefix}'.format(outputPrefix=outputPrefix) if outputPrefix else '') + \
-                  (' -startPage {startPage}'.format(startPage=startPage) if startPage else '') + \
-                  (' -endPage {endPage}'.format(endPage=endPage) if endPage else '') + \
-                  (' -page {page}'.format(page=page) if page else '') + \
-                  (' -dpi {dpi}'.format(dpi=dpi) if dpi else '') + \
-                  (' -color {color}'.format(color=color) if color else '') + \
-                  (' -cropbox {cropbox}'.format(cropbox=cropbox) if cropbox else '') + \
-                  (' {time}'.format(time="-time") if time else '')
+        options = []
+        if password:
+            options.extend(['-password', password])
+        if imageType:
+            options.extend(['-imageType', imageType])
+        if outputPrefix:
+            options.extend(['-outputPrefix', str(pathlib.Path(outputPrefix).expanduser())])
+        if startPage:
+            options.extend(['-startPage', str(startPage)])
+        if endPage:
+            options.extend(['-endPage', str(endPage)])
+        if page:
+            options.extend(['-page', str(page)])
+        if dpi:
+            options.extend(['-dpi', str(dpi)])
+        if color:
+            options.extend(['-color', str(color)])
+        if cropbox:
+            options.extend(['-cropbox', str(cropbox)])
+        if time:
+            options.append('-time')
 
-        cmd = '{options} {input_path}'.format(options=options,
-                                              input_path=input_path).strip()
-        self.pdfbox_tools.PDFToImage.main(cmd.split(' '))
+        args = options
+        args.append(str(pathlib.Path(input_path).expanduser()))
+        self.pdfbox_tools.PDFToImage.main(args)
 
     def extract_images(self, input_path, password=None, prefix=None, directJPEG=False):
         """
@@ -253,10 +275,14 @@ class PDFBox(object):
             Forces the direct extraction of JPEG images regardless of colorspace (default: False).
         """
 
-        options = (' -password {password}'.format(password=password) if password else '') + \
-                  (' -prefix {prefix}'.format(prefix=prefix) if prefix else '') + \
-                  (' -directJPEG {directJPEG}'.format(directJPEG="-directJPEG") if directJPEG else '')
+        options = []
+        if password:
+            options.extend(['-password', password])
+        if prefix:
+            options.extend(['-prefix', str(pathlib.Path(prefix).expanduser())])
+        if directJPEG:
+            options.extend(['-directJPEG', directJPEG])
 
-        cmd = '{options} {input_path}'.format(options=options,
-                                              input_path=input_path).strip()
-        self.pdfbox_tools.ExtractImages.main(cmd.split(' '))
+        args = options
+        args.append(str(pathlib.Path(input_path).expanduser()))
+        self.pdfbox_tools.ExtractImages.main(args)
