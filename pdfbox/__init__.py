@@ -132,7 +132,8 @@ class PDFBox(object):
     def __init__(self):
         self.pdfbox_path = self._get_pdfbox_path()
         jpype.addClassPath(self.pdfbox_path)
-        jpype.startJVM(convertStrings=False)
+        if not jpype.isJVMStarted():
+            jpype.startJVM(convertStrings=False)
         import org.apache.pdfbox.tools as tools
         self.pdfbox_tools = tools
 

@@ -14,6 +14,11 @@ class test_pdfbox(TestCase):
     def setUpClass(cls):
         cls.p = pdfbox.PDFBox()
 
+    def test_init_multiple(self):
+        # Try to initialize and use a second 
+        # instance of the class:
+        p2 = pdfbox.PDFBox()
+
     def test_extract_text(self):
         with TemporaryDirectory() as output_dir:
             output_path = (Path(output_dir) / 'test.txt').resolve()
