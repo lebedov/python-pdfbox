@@ -18,6 +18,11 @@ Aside from Python 3 and those packages specified in
 `setup.py <https://github.com/lebedov/python-pdfbox/blob/master/setup.py>`_,
 python-pdfbox requires ``java`` to be present in the system path.
 
+Some users have reported [issues on
+MacOS](https://github.com/lebedov/python-pdfbox/issues/14) with certain
+versions of Java. If you encounter such issues, try a recent release of OpenJDK
+(14 or later).
+
 Installation
 ------------
 The package may be installed as follows: ::
