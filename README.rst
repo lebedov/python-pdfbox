@@ -5,7 +5,8 @@ python-pdfbox
 
 Package Description
 -------------------
-Provides a simple Python 3 interface to the `Apache PDFBox <https://pdfbox.apache.org/>`_
+Provides a simple Python 3 interface to the 
+`Apache PDFBox <https://pdfbox.apache.org/>`_
 command-line tools.
 
 .. image:: https://img.shields.io/pypi/v/python-pdfbox.svg
@@ -32,7 +33,7 @@ The package may be installed as follows: ::
 One may specify the location of the PDFBox jar file via the ``PDFBOX``
 environmental variable. If not set, python-pdfbox looks for the jar file
 in the platform-specific user cache directory and automatically downloads
-and caches it if not present.
+the latest available version below 3.0.0 and caches it if not present.
 
 Usage
 -----
@@ -44,6 +45,11 @@ of images): ::
     p.extract_text('/path/to/my_file.pdf')   # writes text to /path/to/my_file.txt
     p.pdf_to_images('/path/to/my_file.pdf')  # writes images to /path/to/my_file1.jpg, /path/to/my_file2.jpg, etc.
     p.extract_images('/path/to/my_file.pdf') # writes images to /path/to/my_file-1.png, /path/to/my_file-2.png, etc.
+
+Notes
+-----
+Owing to a change in command line interface, python-pdfbox cannot 
+currently use PDFBox 3.0.0.
 
 Development
 -----------

@@ -73,7 +73,12 @@ class PDFBox(object):
             data = data.decode('utf-8')
         p = _PDFBoxVersionsParser()
         p.feed(data)
-        latest_version = sorted(p.result, key=pkg_resources.parse_version)[-1]
+
+        # Temporarily disallow PDFBox 3 because of change in command line
+        # interface:
+        versions = list(filter(lambda v: pkg_resources.parse_version(v).major<3,
+                               p.result))
+        latest_version = sorted(versions, key=pkg_resources.parse_version)[-1]
         return pdfbox_archive_url + latest_version + '/pdfbox-app-' + \
             latest_version + '.jar'
 
