@@ -76,7 +76,7 @@ class PDFBox(object):
 
         # Temporarily disallow PDFBox 3 because of change in command line
         # interface:
-        versions = list(filter(lambda v: pkg_resources.parse_version(v).major<3,
+        versions = list(filter(lambda v: int(pkg_resources.parse_version(v).base_version.split('.')[0])<3,
                                p.result))
         latest_version = sorted(versions, key=pkg_resources.parse_version)[-1]
         return pdfbox_archive_url + latest_version + '/pdfbox-app-' + \
