@@ -75,7 +75,8 @@ class PDFBox(object):
         p.feed(data)
 
         # Temporarily disallow PDFBox 3 because of change in command line
-        # interface:
+        # interface; get major version by splitting base_version because the major attrib is
+        # not defined for some Python installations:
         versions = list(filter(lambda v: int(pkg_resources.parse_version(v).base_version.split('.')[0])<3,
                                p.result))
         latest_version = sorted(versions, key=pkg_resources.parse_version)[-1]
