@@ -17,7 +17,7 @@ import jpype
 import jpype.imports
 import pkg_resources
 
-pdfbox_archive_url = 'https://archive.apache.org/dist/pdfbox/'
+pdfbox_2_0_27_url = r'https://dlcdn.apache.org/pdfbox/2.0.27/pdfbox-2.0.27.jar'
 
 class _PDFBoxVersionsParser(html.parser.HTMLParser):
     """
@@ -63,25 +63,8 @@ class PDFBox(object):
 
         return hashlib.sha512(data).hexdigest() == digest
 
-    def _get_latest_pdfbox_url(self):
-        r = urllib.request.urlopen(pdfbox_archive_url)
-        try:
-            data = r.read()
-        except:
-            raise RuntimeError('error retrieving %s' % pdfbox_archive_url)
-        else:
-            data = data.decode('utf-8')
-        p = _PDFBoxVersionsParser()
-        p.feed(data)
-
-        # Temporarily disallow PDFBox 3 because of change in command line
-        # interface; get major version by splitting base_version because the major attrib is
-        # not defined for some Python installations:
-        versions = list(filter(lambda v: int(pkg_resources.parse_version(v).base_version.split('.')[0])<3,
-                               p.result))
-        latest_version = sorted(versions, key=pkg_resources.parse_version)[-1]
-        return pdfbox_archive_url + latest_version + '/pdfbox-app-' + \
-            latest_version + '.jar'
+    def _get_compatible_pdfbox_url(self):
+        return pdfbox_2_0_27_url
 
     def _get_pdfbox_path(self):
         """
@@ -109,7 +92,7 @@ class PDFBox(object):
         else:
             # If no jar files are cached, find the latest version jar, retrieve it,
             # cache it, and verify its checksum:
-            pdfbox_url = self._get_latest_pdfbox_url()
+            pdfbox_url = self._get_compatible_pdfbox_url()
             sha512_url = pdfbox_url + '.sha512'
             r = urllib.request.urlopen(pdfbox_url)
             try:
