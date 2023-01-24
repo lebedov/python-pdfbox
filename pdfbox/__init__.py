@@ -17,7 +17,7 @@ import jpype
 import jpype.imports
 import pkg_resources
 
-pdfbox_2_0_27_url = r'https://dlcdn.apache.org/pdfbox/2.0.27/pdfbox-2.0.27.jar'
+pdfbox_2_0_27_url = r'https://dlcdn.apache.org/pdfbox/2.0.27/pdfbox-app-2.0.27.jar'
 
 class _PDFBoxVersionsParser(html.parser.HTMLParser):
     """
