@@ -7,7 +7,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 NAME =               'python-pdfbox-v2'
-VERSION =            '0.1.8.2'
+VERSION =            '2.0.27'
 AUTHOR =             'Lev E. Givon'
 AUTHOR_EMAIL =       'lev@columbia.edu'
 URL =                'https://github.com/lebedov/python-pdfbox/'
